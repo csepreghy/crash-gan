@@ -9,4 +9,4 @@ if __name__ == '__main__':
     imgs = load_frames()
     gan = GAN(config)
     gan.plot_examples(imgs)
-    print(f'imgs.shape = {imgs.shape}')
+    gan.fit(imgs)
