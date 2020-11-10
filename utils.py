@@ -24,11 +24,40 @@ def load_frames():
     for filename in filenames[0:10]:
         img = cv2.imread(filename)
         img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
-        imgs.append(img)
+        img_square = resize(img, (64,64), 0)
+        imgs.append(img_square)
     
     return np.array(imgs)
-    
 
+def resize(img, size, padColor=0):
+
+    h, w = img.shape[:2]
+    sh, sw = size
+
+    # interpolation method
+    if h > sh or w > sw: # shrinking image
+        interp = cv2.INTER_AREA
+    else: # stretching image
+        interp = cv2.INTER_CUBIC
+
+    # aspect ratio of image
+    aspect = w / h  # if on Python 2, you might need to cast as a float: float(w)/h
+
+    new_w = sw
+    new_h = np.round(new_w/aspect).astype(int)
+    pad_vert = (sh-new_h)/2
+    pad_top, pad_bot = np.floor(pad_vert).astype(int), np.ceil(pad_vert).astype(int)
+    pad_left, pad_right = 0, 0
+
+    # set pad color
+    if len(img.shape) is 3 and not isinstance(padColor, (list, tuple, np.ndarray)): # color image but only one color provided
+        padColor = [padColor]*3
+
+    # scale and pad
+    scaled_img = cv2.resize(img, (new_w, new_h), interpolation=interp)
+    scaled_img = cv2.copyMakeBorder(scaled_img, pad_top, pad_bot, pad_left, pad_right, borderType=cv2.BORDER_CONSTANT, value=padColor)
+
+    return scaled_img
 
 if __name__ == '__main__':
     imgs = load_frames()
