@@ -2,6 +2,7 @@ import subprocess
 import cv2
 import glob
 import numpy as np
+import random
 
 def remove_audio():
     command = 'for file in data/*.mp4; do ffmpeg -i "$file" -c copy -an "$file"; done'
@@ -18,10 +19,12 @@ def get_all_frames():
         print('Read a new frame: ', success)
         count += 1
 
-def load_frames():
+def load_frames(n_samples):
     filenames = glob.glob("data/test/frames/*.jpg")
+    random.shuffle(filenames)
+
     imgs = []
-    for filename in filenames[0:10]:
+    for filename in filenames[0:n_samples]:
         img = cv2.imread(filename)
         img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
         img_square = resize(img, (64,64), 0)

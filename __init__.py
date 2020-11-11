@@ -6,7 +6,7 @@ from utils import load_frames
 import config
 
 if __name__ == '__main__':
-    imgs = load_frames()
+    imgs = load_frames(n_samples=128)
     gan = GAN(config)
     gan.plot_examples(imgs)
     gan.fit(imgs)

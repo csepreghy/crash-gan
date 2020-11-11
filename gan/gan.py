@@ -86,25 +86,19 @@ class GAN():
         
         model.add(Conv2D(3, 5, padding='same'))
         model.add(Activation('sigmoid'))
-        
+            
         return model
     
-    def _build_models(self):
-        net_generator = self._build_generator()
-        net_generator.summary()
-
+    def fit(self, imgs):
         net_discriminator = self._build_discriminator()
-        net_discriminator.summary()
-        
+        net_generator = self._build_generator()
+
         optim_discriminator = RMSprop(lr=0.0002, clipvalue=1.0, decay=6e-8)
         model_discriminator = Sequential()
         model_discriminator.add(net_discriminator)
         model_discriminator.compile(loss='binary_crossentropy', optimizer=optim_discriminator, metrics=['accuracy'])
 
-        model_discriminator.summary()
-
         optim_adversarial = Adam(lr=0.0001, clipvalue=1.0, decay=3e-8)
-        
         model_adversarial = Sequential()
         model_adversarial.add(net_generator)
 
@@ -114,78 +108,41 @@ class GAN():
 
         model_adversarial.add(net_discriminator)
         model_adversarial.compile(loss='binary_crossentropy', optimizer=optim_adversarial, metrics=['accuracy'])
-
-        model_adversarial.summary()
-
-        return net_generator, net_discriminator, model_discriminator, model_adversarial
     
-    def fit(self, imgs):
-        net_generator, net_discriminator, model_discriminator, model_adversarial = self._build_models()
-
         batch_size = 128
 
         vis_noise = np.random.uniform(-1.0, 1.0, size=[16, 100])
+        print(f'vis_noise = {vis_noise.shape}')
 
         loss_adv = []
         loss_dis = []
         acc_adv = []
         acc_dis = []
         plot_iteration = []
-
-        for i in range(0, 100):
+ 
+        for i in range(0, 1000):
             
             images_train = imgs
             noise = np.random.uniform(-1.0, 1.0, size=[batch_size, 100])
             images_fake = net_generator.predict(noise)
             
             x = np.concatenate((images_train, images_fake))
-            y = np.ones([2*batch_size, 1])
-            y[batch_size:, :] = 0 
+            y = np.ones([2 * batch_size, 1])
+            y[batch_size:, :] = 0
+            print(f'y.shape = {y.shape}')
+
 
             # Train discriminator for one batch
             d_stats = model_discriminator.train_on_batch(x, y)
             
             y = np.ones([batch_size, 1])
+
             # Train the generator for a number of times
             noise = np.random.uniform(-1.0, 1.0, size=[batch_size, 100])
             a_stats = model_adversarial.train_on_batch(noise, y)
                 
-            if i % 50 == 0:
-                plot_iteration.append(i)
-                loss_adv.append(a_stats[0])
-                loss_dis.append(d_stats[0])
-                acc_adv.append(a_stats[1])
-                acc_dis.append(d_stats[1])
 
-                fig, (ax1, ax2) = plt.subplots(1,2)
-                fig.set_size_inches(16, 8)
-
-                ax1.plot(plot_iteration, loss_adv, label="loss adversarial")
-                ax1.plot(plot_iteration, loss_dis, label="loss discriminator")
-                #ax1.set_ylim([0,5])
-                ax1.legend()
-
-                ax2.plot(plot_iteration, acc_adv, label="acc adversarial")
-                ax2.plot(plot_iteration, acc_dis, label="acc discriminator")
-                ax2.legend()
-
-                plt.show()
-                
-                fig, (ax1, ax2) = plt.subplots(1,2)
-                fig.set_size_inches(16, 8)
-
-                ax1.plot(plot_iteration, loss_adv, label="loss adversarial")
-                ax1.plot(plot_iteration, loss_dis, label="loss discriminator")
-                #ax1.set_ylim([0,5])
-                ax1.legend()
-
-                ax2.plot(plot_iteration, acc_adv, label="acc adversarial")
-                ax2.plot(plot_iteration, acc_dis, label="acc discriminator")
-                ax2.legend()
-
-                plt.show()
-            
-            if (i < 1000 and i % 50 == 0) or (i % 100 == 0):
+            if i % 100 == 0:
                 images = net_generator.predict(vis_noise)
                 
                 # Map back to original range
@@ -195,11 +152,10 @@ class GAN():
                 for im in range(images.shape[0]):
                     plt.subplot(4, 4, im+1)
                     image = images[im, :, :, :]
-                    image = np.reshape(image, [64,64,3])
+                    image = np.reshape(image, [64, 64,3])
                     plt.imshow(image)
                     plt.axis('off')
                     
                 plt.tight_layout()
-                plt.savefig(r'output/mnist-color/{}.png'.format(i))
+                plt.savefig(r'crash-generated/{}.png'.format(i))
                 plt.close('all')
-
