@@ -2,6 +2,7 @@
 data
 images
 .vscode
+cras-generated
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
