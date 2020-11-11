@@ -15,7 +15,7 @@ import glob
 import cv2
 import random
 
-from .utils import load_frames
+from utils import load_frames
 
 class GAN():
     def __init__(self, config):

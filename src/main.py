@@ -1,8 +1,8 @@
 import numpy as np
 
 # Local Imports
-from src.gan import GAN
-from src.utils import load_frames
+from gan import GAN
+from utils import load_frames
 import config
 
 if __name__ == '__main__':
