@@ -11,11 +11,16 @@ import numpy as np
 import matplotlib.pyplot as plt
 import scipy.ndimage
 from PIL import Image as PILImage
+import glob
+import cv2
+import random
+
+from .utils import load_frames
 
 class GAN():
     def __init__(self, config):
         self.config = config
-
+    
     def plot_examples(self, imgs):
         count = 10
 
@@ -89,7 +94,7 @@ class GAN():
             
         return model
     
-    def fit(self, imgs):
+    def fit(self):
         net_discriminator = self._build_discriminator()
         net_generator = self._build_generator()
 
@@ -112,7 +117,6 @@ class GAN():
         batch_size = 128
 
         vis_noise = np.random.uniform(-1.0, 1.0, size=[16, 100])
-        print(f'vis_noise = {vis_noise.shape}')
 
         loss_adv = []
         loss_dis = []
@@ -120,17 +124,14 @@ class GAN():
         acc_dis = []
         plot_iteration = []
  
-        for i in range(0, 1000):
-            
-            images_train = imgs
+        for i in range(0, self.config.epochs):    
+            images_train = load_frames(n_samples=batch_size, source_folder=self.config.source_folder)
             noise = np.random.uniform(-1.0, 1.0, size=[batch_size, 100])
             images_fake = net_generator.predict(noise)
             
             x = np.concatenate((images_train, images_fake))
             y = np.ones([2 * batch_size, 1])
             y[batch_size:, :] = 0
-            print(f'y.shape = {y.shape}')
-
 
             # Train discriminator for one batch
             d_stats = model_discriminator.train_on_batch(x, y)
@@ -141,12 +142,13 @@ class GAN():
             noise = np.random.uniform(-1.0, 1.0, size=[batch_size, 100])
             a_stats = model_adversarial.train_on_batch(noise, y)
                 
-
-            if i % 100 == 0:
+            print(f'i = {i}')
+            if i % 25 == 0:
+                print(f'iii = {i}')
                 images = net_generator.predict(vis_noise)
                 
                 # Map back to original range
-                #images = (images + 1 ) * 0.5
+                images = (images + 1 ) * 0.5
                 
                 plt.figure(figsize=(10,10))
                 for im in range(images.shape[0]):
@@ -158,4 +160,3 @@ class GAN():
                     
                 plt.tight_layout()
                 plt.savefig(r'crash-generated/{}.png'.format(i))
-                plt.close('all')

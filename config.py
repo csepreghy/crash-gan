@@ -1,1 +1,2 @@
-epochs = 100
+epochs = 1000
+source_folder = 'data/test/frames'

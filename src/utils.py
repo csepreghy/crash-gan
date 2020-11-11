@@ -8,7 +8,6 @@ def remove_audio():
     command = 'for file in data/*.mp4; do ffmpeg -i "$file" -c copy -an "$file"; done'
     subprocess.call(command, shell=True)
 
-
 def get_all_frames():
     vidcap = cv2.VideoCapture('data/test/crash360p_1024k.mp4')
     success,image = vidcap.read()
@@ -19,8 +18,8 @@ def get_all_frames():
         print('Read a new frame: ', success)
         count += 1
 
-def load_frames(n_samples):
-    filenames = glob.glob("data/test/frames/*.jpg")
+def load_frames(n_samples, source_folder):
+    filenames = glob.glob(f'{source_folder}/*.jpg')
     random.shuffle(filenames)
 
     imgs = []
