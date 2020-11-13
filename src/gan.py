@@ -35,13 +35,13 @@ class GAN():
     
     def _build_discriminator(self):
         model = Sequential()
-        input_shape = (64, 64, 3)
+        input_shape = (128, 128, 3)
         dropout_prob = 0.4
 
-        model.add(Conv2D(64, 5, strides=2, input_shape=input_shape, padding='same'))
+        model.add(Conv2D(128, 5, strides=2, input_shape=input_shape, padding='same'))
         model.add(LeakyReLU())
         
-        model.add(Conv2D(128, 5, strides=2, padding='same'))
+        model.add(Conv2D(256, 5, strides=2, padding='same'))
         model.add(LeakyReLU())
         model.add(Dropout(dropout_prob))
         
@@ -64,10 +64,10 @@ class GAN():
         model = Sequential()
         dropout_prob = 0.4
         
-        model.add(Dense(8*8*256, input_dim=100))
+        model.add(Dense(128 * 256, input_dim=256))
         model.add(BatchNormalization(momentum=0.9))
         model.add(Activation('relu'))
-        model.add(Reshape((8,8,256)))
+        model.add(Reshape((16, 16, 128)))
         model.add(Dropout(dropout_prob))
         
         model.add(UpSampling2D())
@@ -116,7 +116,7 @@ class GAN():
     
         batch_size = 128
 
-        vis_noise = np.random.uniform(-1.0, 1.0, size=[16, 100])
+        vis_noise = np.random.uniform(-1.0, 1.0, size=[16, 256])
 
         loss_adv = []
         loss_dis = []
@@ -126,7 +126,7 @@ class GAN():
  
         for i in range(0, self.config.epochs):    
             images_train = load_frames(n_samples=batch_size, source_folder=self.config.source_folder)
-            noise = np.random.uniform(-1.0, 1.0, size=[batch_size, 100])
+            noise = np.random.uniform(-1.0, 1.0, size=[batch_size, 256])
             images_fake = net_generator.predict(noise)
             
             x = np.concatenate((images_train, images_fake))
@@ -139,7 +139,7 @@ class GAN():
             y = np.ones([batch_size, 1])
 
             # Train the generator for a number of times
-            noise = np.random.uniform(-1.0, 1.0, size=[batch_size, 100])
+            noise = np.random.uniform(-1.0, 1.0, size=[batch_size, 256])
             a_stats = model_adversarial.train_on_batch(noise, y)
 
             if i % 25 == 0:
@@ -153,7 +153,7 @@ class GAN():
                 for im in range(images.shape[0]):
                     plt.subplot(4, 4, im+1)
                     image = images[im, :, :, :]
-                    image = np.reshape(image, [64, 64,3])
+                    image = np.reshape(image, [128, 128,3])
                     plt.imshow(image)
                     plt.axis('off')
                     

@@ -26,7 +26,7 @@ def load_frames(n_samples, source_folder):
     for filename in filenames[0:n_samples]:
         img = cv2.imread(filename)
         img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
-        img_square = resize(img, (64,64), 0)
+        img_square = resize(img, (128,128), 0)
         imgs.append(img_square)
     
     return np.array(imgs)
