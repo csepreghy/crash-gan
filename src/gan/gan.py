@@ -15,7 +15,7 @@ import glob
 import cv2
 import random
 
-from utils import load_frames
+import utils
 
 class GAN():
     def __init__(self, config):
@@ -125,7 +125,7 @@ class GAN():
         plot_iteration = []
  
         for i in range(0, self.config.epochs):    
-            images_train = load_frames(n_samples=batch_size, source_folder=self.config.source_folder)
+            images_train = utils.load_frames(n_samples=batch_size, source_folder=self.config.source_folder)
             noise = np.random.uniform(-1.0, 1.0, size=[batch_size, 100])
             images_fake = net_generator.predict(noise)
             
