@@ -11,4 +11,4 @@ if __name__ == '__main__':
     
     gan = GAN(config)
     gan.plot_examples(imgs)
-    gan.fit()
+    # gan.fit()

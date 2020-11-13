@@ -27,7 +27,7 @@ class GAN():
         plt.figure(figsize=(15,3))
         for i in range(count):
             plt.subplot(2, count // 2, i+1)
-            plt.imshow(imgs[i])
+            plt.imshow(imgs[i], interpolation='nearest')
             plt.axis('off')
             
         plt.tight_layout()
@@ -154,7 +154,7 @@ class GAN():
                     plt.subplot(4, 4, im+1)
                     image = images[im, :, :, :]
                     image = np.reshape(image, [128, 128,3])
-                    plt.imshow(image)
+                    plt.imshow(image, interpolation='nearest')
                     plt.axis('off')
                     
                 plt.tight_layout()
