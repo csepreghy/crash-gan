@@ -36,9 +36,9 @@ class GAN():
     def _build_discriminator(self):
         model = Sequential()
         input_shape = (128, 128, 3)
-        dropout_prob = 0.4
+        dropout_prob = 0.2
 
-        model.add(Conv2D(128, 5, strides=2, input_shape=input_shape, padding='same'))
+        model.add(Conv2D(512, 5, strides=2, input_shape=input_shape, padding='same'))
         model.add(LeakyReLU())
         
         model.add(Conv2D(256, 5, strides=2, padding='same'))
@@ -49,16 +49,15 @@ class GAN():
         model.add(LeakyReLU())
         model.add(Dropout(dropout_prob))
         
-        model.add(Conv2D(256, 5, strides=2, padding='same'))
-        model.add(LeakyReLU())
-        model.add(Dropout(dropout_prob))
-        
-        model.add(Conv2D(512, 5, strides=2, padding='same'))
+        model.add(Conv2D(128, 5, strides=2, padding='same'))
         model.add(LeakyReLU())
         model.add(Dropout(dropout_prob))
         
         model.add(Flatten())
+        model.add(Dense(128))
+        model.add(Dense(64))
         model.add(Dense(1))
+
         model.add(Activation('sigmoid'))
         
         return model
@@ -89,7 +88,6 @@ class GAN():
         model.add(BatchNormalization(momentum=0.9))
         model.add(Activation('relu'))
         
-        model.add(UpSampling2D())
         model.add(Conv2D(64, 5, padding='same'))
         model.add(BatchNormalization(momentum=0.9))
         model.add(Activation('relu'))
