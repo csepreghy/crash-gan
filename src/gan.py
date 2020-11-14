@@ -142,7 +142,7 @@ class GAN():
             noise = np.random.uniform(-1.0, 1.0, size=[batch_size, 256])
             a_stats = model_adversarial.train_on_batch(noise, y)
 
-            if i % 25 == 0:
+            if i % 100 == 0:
                 print(f'iii = {i}')
                 images = net_generator.predict(vis_noise)
                 
