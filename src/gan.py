@@ -49,6 +49,10 @@ class GAN():
         model.add(LeakyReLU())
         model.add(Dropout(dropout_prob))
         
+        model.add(Conv2D(256, 5, strides=2, padding='same'))
+        model.add(LeakyReLU())
+        model.add(Dropout(dropout_prob))
+        
         model.add(Conv2D(512, 5, strides=2, padding='same'))
         model.add(LeakyReLU())
         model.add(Dropout(dropout_prob))
@@ -71,7 +75,12 @@ class GAN():
         model.add(Dropout(dropout_prob))
         
         model.add(UpSampling2D())
-        model.add(Conv2D(128, 5, padding='same'))
+        model.add(Conv2D(256, 5, padding='same'))
+        model.add(BatchNormalization(momentum=0.9))
+        model.add(Activation('relu'))
+
+        model.add(UpSampling2D())
+        model.add(Conv2D(256, 5, padding='same'))
         model.add(BatchNormalization(momentum=0.9))
         model.add(Activation('relu'))
         
