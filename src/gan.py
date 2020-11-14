@@ -158,4 +158,4 @@ class GAN():
                     plt.axis('off')
                     
                 plt.tight_layout()
-                plt.savefig(r'crash-generated/{}.png'.format(i))
+                plt.savefig(f'{self.config.save_path}/{i}.png')
